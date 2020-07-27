@@ -9,7 +9,8 @@ import {
   ScrollView,
 } from 'react-native';
 import Input from '../Components/Forms/Input';
-//import Button from '../Components/Forms/Button';
+import Button from '../Components/Forms/Button';
+import Api from '../Api';
 import {Dropdown} from 'react-native-material-dropdown';
 
 const styles = StyleSheet.create({
@@ -29,6 +30,11 @@ const styles = StyleSheet.create({
   titleInput: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  textLogin: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   containerForm: {
     width: '90%',
@@ -70,7 +76,28 @@ export default class Register extends Component {
       sexo: '',
       usuario: '',
       contrasena: '',
+      getGradoAcademico: '',
+      selectGradoAcademico: [],
+      disabledButton: false,
     }
+  }
+  async componentDidMount() {
+    await Api.GradoAcademicoApi.getGradoAcademico().then((data) => {
+      if (data.errors) {
+        console.warn('data errors', data.errors);
+      } else {
+        this.setState({
+          getGradoAcademico: data,
+        });
+      }
+    })
+    const grado = [];
+    this.state.getGradoAcademico.map((item) => {
+      grado.push({value: item.codigoGradoAcademico, label: item.descripcion});
+    });
+    this.setState({
+      selectGradoAcademico: grado,
+    });
   }
   onChangeText = (value, type) => {
     if (type === 'nombres') {
@@ -148,8 +175,9 @@ export default class Register extends Component {
       contrasena,
       gradoAcademico,
       sexo,
+      selectGradoAcademico,
+      disabledButton,
     } = this.state;
-    //console.warn('sexo', sexo);
     return (
       <View style={styles.container}>
         <ScrollView>
@@ -242,36 +270,32 @@ export default class Register extends Component {
               TextInputStyle={styles.textInput}
               maxLength={8}
             />
-            {/* <Text style={styles.Label}>Grado académico</Text> */}
-            <Dropdown
-              label={'Grado académico'}
-              value={gradoAcademico}
-              containerStyle={{ marginTop: 10}}
-              inputContainerStyle={{ backgroundColor:'white', borderRadius:8, paddingLeft: 2}}
-              labelTextStyle={{marginTop:-10, paddingLeft: 2}}
-              data={[
-                {
-                  value: 'Banana2',
-                  label: 'Banana 2',
-                },
-                {
-                  value: 'Mango',
-                  label: 'Mango 1',
-                },
-                {
-                  value: 'Pear',
-                  label: 'Pear 1',
-                },
-              ]}
-              onChangeText={(value) => this.onChangeText(value, 'grado')}
-            />
-            {/* <Text style={styles.Label}>Sexo</Text> */}
+            {selectGradoAcademico.length !== 0 ? (
+              <Dropdown
+                label={'Grado académico'}
+                value={gradoAcademico}
+                containerStyle={{marginTop: 10}}
+                inputContainerStyle={{
+                  backgroundColor: 'white',
+                  borderRadius: 8,
+                  paddingLeft: 2,
+                }}
+                labelTextStyle={{marginTop: -10, paddingLeft: 2}}
+                data={selectGradoAcademico}
+                onChangeText={(value) => this.onChangeText(value, 'grado')}
+              />
+            ) : null}
             <Dropdown
               label={'Sexo'}
               value={sexo}
-              containerStyle={{ marginTop: 10}}
-              inputContainerStyle={{backgroundColor:'white', borderBottomWidth:0, borderRadius:8, paddingLeft: 2}}
-              labelTextStyle={{marginTop:-10, paddingLeft: 2}}
+              containerStyle={{marginTop: 10}}
+              inputContainerStyle={{
+                backgroundColor: 'white',
+                borderBottomWidth: 0,
+                borderRadius: 8,
+                paddingLeft: 2,
+              }}
+              labelTextStyle={{marginTop: -10, paddingLeft: 2}}
               data={[
                 {
                   value: 'F',
@@ -310,6 +334,13 @@ export default class Register extends Component {
               onFocusInput={() => this.focus('contrasena')}
               onChange={(value) => this.onChangeText(value, 'contrasena')}
               TextInputStyle={styles.textInput}
+            />            
+            <Button
+              onPressButton={() => this.sendLogin()}
+              styleButton={[styles.buttonContainer, styles.animation]}
+              styleText={styles.textLogin}
+              title="Iniciar sesión"
+              disabled={disabledButton}
             />
           </View>
         </ScrollView>

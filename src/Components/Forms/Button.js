@@ -62,7 +62,7 @@ class Button extends Component {
         delayPressOut={0}
         style={[
           !disabled ? styleButton || styles.buyButton : styles.disabled,
-          {justifyContent: 'center', alignItems: 'center', marginTop: 20, backgroundColor: 'white', height: '16%', borderRadius:8},
+          {justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom: 10, backgroundColor: 'white', height: 45, borderRadius:8},
         ]}
         disabled={disabled}>
         <View pointerEvents={disabled ? 'none' : 'auto'}>

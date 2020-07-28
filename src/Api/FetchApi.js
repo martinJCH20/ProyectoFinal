@@ -1,13 +1,17 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: 'http://192.168.16.104:9095',
+  baseURL: 'http://192.168.1.61:9095',
   timeout: 1000,
   headers: {
+    // 'Content-Length': 0,
+    // Host: '',
     'Content-Type': 'application/json',
     Accept: 'application/json',
+    Authorization: 'Bearer test',
   },
 });
+
 const parseBody = async (res) => {
   //console.warn('res.status parseBody', res);
   if (res.status) {
@@ -115,10 +119,11 @@ const FetchApi = {
         return parseBody(result);
       })
       .catch((error) => {
+        console.warn('FetchApi post error', error.message);
         try {
           if (error.message) {
             return {
-              errors: 'Error de red',
+              errors: 'Error de red post',
               status: 1000,
             };
           }

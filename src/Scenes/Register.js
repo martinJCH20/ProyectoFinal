@@ -163,6 +163,61 @@ export default class Register extends Component {
       });
     }
   };
+  sendRegister = () => {
+    let validacion = '';
+    if (this.state.nombres == '') {
+      validacion += 'Debe ingresar nombres \n';
+    }
+    if (this.state.apellidos == '') {
+      validacion += 'Debe ingresar apellidos \n';
+    }
+    if (this.state.email == '') {
+      validacion += 'Debe ingresar email \n';
+    }
+    if (this.state.celular == '') {
+      validacion += 'Debe ingresar celular \n';
+    }
+    if (this.state.gradoAcademico == '') {
+      validacion += 'Debe seleccionar grado académico \n';
+    }
+    if (this.state.sexo == '') {
+      validacion += 'Debe seleccionar sexo \n';
+    }
+    if (this.state.usuario == '') {
+      validacion += 'Debe ingresar usuario \n';
+    }
+    if (this.state.contrasena == '') {
+      validacion += 'Debe ingresar contraseña \n';
+    }
+    if (validacion != '') {
+      console.warn(validacion);
+    } else {
+      const parameters = {
+        gradoAcademico: this.state.gradoAcademico,
+        nombres: this.state.nombres,
+        apellidos: this.state.apellidos,
+        email: this.state.email,
+        celular: this.state.celular,
+        telefono: this.state.telefono,
+        dni: this.state.dni,
+        sexo: this.state.sexo,
+        usuario: this.state.usuario,
+        contrasena: this.state.contrasena,
+      };
+      //console.warn('parametros', parameters);
+      Api.UsuarioApi.createUsuario(parameters)
+        .then((result) => {
+          if (result.errors) {
+            console.warn('data errors', result.errors);
+          } else {
+            console.warn('Registrado');
+          }
+        })
+        .catch((err) => {
+          console.warn('Response err', err);
+        });
+    }
+  };
   render() {
     const {
       nombres,
@@ -334,12 +389,12 @@ export default class Register extends Component {
               onFocusInput={() => this.focus('contrasena')}
               onChange={(value) => this.onChangeText(value, 'contrasena')}
               TextInputStyle={styles.textInput}
-            />            
+            />
             <Button
-              onPressButton={() => this.sendLogin()}
+              onPressButton={() => this.sendRegister()}
               styleButton={[styles.buttonContainer, styles.animation]}
               styleText={styles.textLogin}
-              title="Iniciar sesión"
+              title="Registrar"
               disabled={disabledButton}
             />
           </View>

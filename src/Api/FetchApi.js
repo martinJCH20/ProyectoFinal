@@ -4,11 +4,9 @@ const instance = axios.create({
   baseURL: 'http://192.168.1.61:9095',
   timeout: 1000,
   headers: {
-    // 'Content-Length': 0,
-    // Host: '',
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    Authorization: 'Bearer test',
+    //Authorization: 'Bearer test',
   },
 });
 
@@ -119,7 +117,7 @@ const FetchApi = {
         return parseBody(result);
       })
       .catch((error) => {
-        console.warn('FetchApi post error', error.message);
+        //console.warn('FetchApi post error', error.message);
         try {
           if (error.message) {
             return {

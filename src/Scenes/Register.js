@@ -316,7 +316,7 @@ export default class Register extends Component {
               labelStyle={styles.titleInput}
               value={dni}
               ref={(ref) => (this.inputDni = ref)}
-              type="number"
+              type="dni"
               placeholder="DNI"
               placeholderTextColor="#A9A9A9"
               keyboardType="numeric"

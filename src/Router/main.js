@@ -3,6 +3,7 @@ import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import Login from '../Scenes/Login';
 import Home from '../Scenes/Home';
 import Register from '../Scenes/Register';
+import Menu from '../Scenes/Menu';
 const Stack = createStackNavigator();
 
 const MainStackNavigator = (props) => {
@@ -46,6 +47,15 @@ const MainStackNavigator = (props) => {
         }}
         name="Home"
         component={Home}
+      />
+      <Stack.Screen
+        options={{
+          cardStyleInterpolator: forFade,
+          gestureEnabled: false,
+          title: 'Menu',
+        }}
+        name="Menu"
+        component={Menu}
       />
     </Stack.Navigator>
   );

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import Input from '../Components/Forms/Input';
 import Button from '../Components/Forms/Button';
+import Api from '../Api';
 
 const styles = StyleSheet.create({
   container: {
@@ -84,17 +85,48 @@ export default class Login extends Component {
         usuario: this.inputUsuario.state.value,
       });
     }
+    if (type === 'contrasena') {
+      this.setState({
+        contrasena: this.inputContrasena.state.value,
+      });
+    }
   };
   focus = (value) => {
     if (value === 'usuario') {
       this.setState({
-        //typingEmail: false,
         typingInputUsuario: true,
       });
     }
   };
   sendLogin = () => {
-    console.warn('iniciando');
+    let validacion = '';
+    if (this.state.usuario == '') {
+      validacion += 'Debe ingresar usuario \n';
+    }
+    if (this.state.contrasena == '') {
+      validacion += 'Debe ingresar contraseña \n';
+    }
+    if (validacion != '') {
+      console.warn(validacion);
+    } else {
+      const parameters = {
+        usuario: this.state.usuario,
+        contrasena: this.state.contrasena,
+      };
+      Api.UsuarioApi.postLogin(parameters)
+        .then((result) => {
+          if (result.errors) {
+            //console.warn('Error', result.errors);
+            console.warn('Usuario y/o contraseña no son válidos');
+          } else {
+            this.props.navigation.navigate('Menu');
+            //console.warn('iniciando', result);
+          }
+        })
+        .catch((err) => {
+          console.warn('Error de servicio', err);
+        });
+    }
   };
   goToRegister = (item, index) => {
     this.props.navigation.navigate('Register');
@@ -117,7 +149,9 @@ export default class Login extends Component {
             <Text style={styles.title}>Bienvenido,</Text>
             <Text style={styles.title}>Inicie sesión para continuar</Text>
           </View>
-          <Image source={require('../../assets/vegetales2.png')} style={styles.imageLogin}></Image>
+          <Image
+            source={require('../../assets/vegetales2.png')}
+            style={styles.imageLogin}></Image>
           <View style={styles.containerForm}>
             <Input
               label="Usuario"
@@ -138,13 +172,13 @@ export default class Login extends Component {
               label="Contraseña"
               labelStyle={styles.titleInput}
               value={contrasena}
-              ref={(ref) => (this.inputUsuario = ref)}
+              ref={(ref) => (this.inputContrasena = ref)}
               type="password"
               placeholder="Contraseña"
               placeholderTextColor="#A9A9A9"
               secureTextEntry
-              onFocusInput={() => this.focus('usuario')}
-              onChange={(value) => this.onChangeText(value, 'usuario')}
+              onFocusInput={() => this.focus('contrasena')}
+              onChange={(value) => this.onChangeText(value, 'contrasena')}
               TextInputStyle={styles.textInput}
             />
             <Button
@@ -154,7 +188,11 @@ export default class Login extends Component {
               title="Iniciar sesión"
               disabled={disabledButton}
             />
-            <TouchableOpacity onPress={this.goToRegister} style={styles.register}><Text style={styles.textRegister}>Regitrarse ></Text></TouchableOpacity>
+            <TouchableOpacity
+              onPress={this.goToRegister}
+              style={styles.register}>
+              <Text style={styles.textRegister}>Regitrarse ></Text>
+            </TouchableOpacity>
           </View>
         </ImageBackground>
       </View>

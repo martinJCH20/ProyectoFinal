@@ -2,6 +2,7 @@ const formatEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
 const formatPhone = /^\d{9}$/;
 const cvv = 3;
 const minCharacterCard = 15;
+const minDNI = 8;
 // const expireDate = /^\d(\/\d+)*$/;
 const expireDate = /^(0[1-9]|1[0-2])\/?([0-9]{2}|[0-9]{2})$/;
 const numbers = /^\d+$/;
@@ -73,6 +74,14 @@ const Validator = (type, value) => {
       }
       return {
         error: 'ccv incorrecto',
+        value,
+      };
+    case 'dni':
+      if (value.length == minDNI) {
+        return {error: ''};
+      }
+      return {
+        error: 'Ingresa un número de DNI correcto',
         value,
       };
     default:

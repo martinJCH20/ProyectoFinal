@@ -1,9 +1,9 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import Login from '../Scenes/Login';
-import Home from '../Scenes/Home';
 import Register from '../Scenes/Register';
-import Menu from '../Scenes/Menu';
+import Dashboard from '../Scenes/Dashboard';
+import RegisterPatient from '../Scenes/RegisterPatient';
 const Stack = createStackNavigator();
 
 const MainStackNavigator = (props) => {
@@ -43,19 +43,19 @@ const MainStackNavigator = (props) => {
         options={{
           cardStyleInterpolator: forFade,
           gestureEnabled: false,
-          title: 'Home',
+          title: 'Dashboard',
         }}
-        name="Home"
-        component={Home}
+        name="Dashboard"
+        component={Dashboard}
       />
       <Stack.Screen
         options={{
           cardStyleInterpolator: forFade,
           gestureEnabled: false,
-          title: 'Menu',
+          title: 'RegisterPatient',
         }}
-        name="Menu"
-        component={Menu}
+        name="RegisterPatient"
+        component={RegisterPatient}
       />
     </Stack.Navigator>
   );

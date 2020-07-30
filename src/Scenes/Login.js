@@ -100,13 +100,13 @@ export default class Login extends Component {
   };
   sendLogin = () => {
     let validacion = '';
-    if (this.state.usuario == '') {
+    if (this.state.usuario === '') {
       validacion += 'Debe ingresar usuario \n';
     }
-    if (this.state.contrasena == '') {
+    if (this.state.contrasena === '') {
       validacion += 'Debe ingresar contraseña \n';
     }
-    if (validacion != '') {
+    if (validacion !== '') {
       console.warn(validacion);
     } else {
       const parameters = {
@@ -119,7 +119,7 @@ export default class Login extends Component {
             //console.warn('Error', result.errors);
             console.warn('Usuario y/o contraseña no son válidos');
           } else {
-            this.props.navigation.navigate('Menu');
+            this.props.navigation.navigate('Dashboard');
             //console.warn('iniciando', result);
           }
         })

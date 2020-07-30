@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Platform,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -56,22 +57,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
 });
-export default class Menu extends Component {
+export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  goToRegisterPatient = (item, index) => {
+    this.props.navigation.navigate('RegisterPatient');
+  };
   render() {
     return (
       <View style={styles.container}>
         <ScrollView>
           <View style={styles.containerTitle}>
             <Text style={styles.title}>Bienvenid@</Text>
-            <View style={styles.containerPatient}>
+            <TouchableOpacity
+              onPress={this.goToRegisterPatient}
+              style={styles.containerPatient}>
               <Text style={styles.titleItems}>Registra tu paciente</Text>
-            </View>
+            </TouchableOpacity>
           </View>
-          <View style={{flexDirection:'row'}}>
+          <View style={{flexDirection: 'row'}}>
             <View style={styles.containerDiagnostic}>
               <Text style={styles.titleItems}>Diagnóstico</Text>
             </View>

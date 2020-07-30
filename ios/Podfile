@@ -10,6 +10,7 @@ target 'nutriperu' do
 
   pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
 
+
   pod 'RNSecureKeyStore', :path => '../node_modules/react-native-secure-key-store'
 
   target 'nutriperuTests' do

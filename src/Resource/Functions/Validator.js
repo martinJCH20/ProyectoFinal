@@ -8,6 +8,7 @@ const expireDate = /^(0[1-9]|1[0-2])\/?([0-9]{2}|[0-9]{2})$/;
 const numbers = /^\d+$/;
 const name = /^[a-zA-ZÀ-ú0-9]+( [a-zA-ZÀ-ú0-9]+)*$/;
 const formatPassword = /^(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[#?!@$%^&*\-_]).{8,}$/;
+const decimalTwo = /^\d+(\.\d{1,2})?$/;
 
 const Validator = (type, value) => {
   switch (type) {
@@ -82,6 +83,14 @@ const Validator = (type, value) => {
       }
       return {
         error: 'Ingresa un número de DNI correcto',
+        value,
+      };
+    case 'decimalTwo':
+      if (decimalTwo.test(value)) {
+        return {error: ''};
+      }
+      return {
+        error: 'Ingresa un formato válido.  ej: 25.10',
         value,
       };
     default:

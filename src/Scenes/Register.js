@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Dimensions,
-  Text,
-  StatusBar,
-  StyleSheet,
-  Platform,
-  ScrollView,
-} from 'react-native';
+import {View, Text, StatusBar, StyleSheet, ScrollView} from 'react-native';
 import Input from '../Components/Forms/Input';
 import Button from '../Components/Forms/Button';
 import Api from '../Api';
@@ -165,31 +157,31 @@ export default class Register extends Component {
   };
   sendRegister = () => {
     let validacion = '';
-    if (this.state.nombres == '') {
+    if (this.state.nombres === '') {
       validacion += 'Debe ingresar nombres \n';
     }
-    if (this.state.apellidos == '') {
+    if (this.state.apellidos === '') {
       validacion += 'Debe ingresar apellidos \n';
     }
-    if (this.state.email == '') {
+    if (this.state.email === '') {
       validacion += 'Debe ingresar email \n';
     }
-    if (this.state.celular == '') {
+    if (this.state.celular === '') {
       validacion += 'Debe ingresar celular \n';
     }
-    if (this.state.gradoAcademico == '') {
+    if (this.state.gradoAcademico === '') {
       validacion += 'Debe seleccionar grado académico \n';
     }
-    if (this.state.sexo == '') {
+    if (this.state.sexo === '') {
       validacion += 'Debe seleccionar sexo \n';
     }
-    if (this.state.usuario == '') {
+    if (this.state.usuario === '') {
       validacion += 'Debe ingresar usuario \n';
     }
-    if (this.state.contrasena == '') {
+    if (this.state.contrasena === '') {
       validacion += 'Debe ingresar contraseña \n';
     }
-    if (validacion != '') {
+    if (validacion !== '') {
       console.warn(validacion);
     } else {
       const parameters = {

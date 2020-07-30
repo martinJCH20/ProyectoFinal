@@ -1,5 +1,4 @@
 import FetchApi from './FetchApi';
-//import LocalStorage from '../Resource/Functions/local'BORRAR
 
 const UsuarioApi = {
   createUsuario: async (parameters) => {
@@ -15,8 +14,8 @@ const UsuarioApi = {
       usuario: parameters.usuario,
       contrasena: parameters.contrasena,
     }).toString();
-    console.warn(params);
-    const data = await FetchApi.post('/api/UsuarioApi?' + params);
+    //console.warn(params);
+    const data = await FetchApi.post(`/api/UsuarioApi?${params}`);
     return data;
   },
   postLogin: async (parameters) => {

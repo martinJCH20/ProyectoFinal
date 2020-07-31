@@ -4,6 +4,7 @@ import Login from '../Scenes/Login';
 import Register from '../Scenes/Register';
 import Dashboard from '../Scenes/Dashboard';
 import RegisterPatient from '../Scenes/RegisterPatient';
+import Diagnostic from '../Scenes/Diagnostic';
 const Stack = createStackNavigator();
 
 const MainStackNavigator = (props) => {
@@ -56,6 +57,15 @@ const MainStackNavigator = (props) => {
         }}
         name="RegisterPatient"
         component={RegisterPatient}
+      />
+      <Stack.Screen
+        options={{
+          cardStyleInterpolator: forFade,
+          gestureEnabled: false,
+          title: 'Diagnostic',
+        }}
+        name="Diagnostic"
+        component={Diagnostic}
       />
     </Stack.Navigator>
   );

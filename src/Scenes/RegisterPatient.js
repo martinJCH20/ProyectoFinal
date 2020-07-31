@@ -7,6 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import {connect} from 'react-redux';
+import Actions from '../actions/PatientAction';
 import Input from '../Components/Forms/Input';
 import Button from '../Components/Forms/Button';
 import {Dropdown} from 'react-native-material-dropdown';
@@ -50,13 +52,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 10,
   },
-  textRegister: {
+  textLink: {
     fontSize: 15,
     color: 'white',
     fontWeight: 'bold',
   },
+  diagnostic: {
+    alignItems: 'flex-end',
+    marginTop: 10,
+  }
 });
-export default class RegisterPatient extends Component {
+class RegisterPatient extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,9 +72,18 @@ export default class RegisterPatient extends Component {
       peso: '',
       talla: '',
       sexo: '',
+      actividad: '',
+      detailPatient: '',
       returnS: '<',
       disabledButton: false,
-    }
+    };
+  }
+  async componentDidMount() {
+    await this.props.getRegisterPatients();
+    const result = this.props.data;
+    this.setState({
+      detailPatient: result.patient,
+    });
   }
   onChangeText = (value, type) => {
     if (type === 'nombres') {
@@ -101,6 +116,11 @@ export default class RegisterPatient extends Component {
         sexo: value,
       });
     }
+    if (type === 'actividad') {
+      this.setState({
+        actividad: value,
+      });
+    }
   };
   focus = (value) => {
     if (value === 'nombres') {
@@ -114,7 +134,7 @@ export default class RegisterPatient extends Component {
       });
     }
   };
-  sendRegister = () => {
+  sendRegister = async () => {
     let validacion = '';
     if (this.state.nombres === '') {
       validacion += 'Debe ingresar nombres \n';
@@ -134,14 +154,37 @@ export default class RegisterPatient extends Component {
     if (this.state.sexo === '') {
       validacion += 'Debe seleccionar sexo \n';
     }
+    if (this.state.actividad === '') {
+      validacion += 'Debe seleccionar actividad \n';
+    }
     if (validacion !== '') {
       console.warn(validacion);
     } else {
-      console.warn('Registrado');
+      const patient = {
+        nombres: this.state.nombres,
+        apellidos: this.state.apellidos,
+        edad: this.state.edad,
+        peso: this.state.peso,
+        talla: this.state.talla,
+        sexo: this.state.sexo,
+        actividad: this.state.actividad,
+      };
+      await this.props.setRegisterPatients(patient);
+      this.setState({detailPatient: patient})
+      const pt = this.props.data;
+      console.warn('Registrado', pt);
     }
   };
   goReturn = (item, index) => {
     this.props.navigation.navigate('Dashboard');
+  };
+  goDiagnostic = () => {
+    //console.warn(this.state.detailPatient);
+    if (this.state.detailPatient === '') {
+      console.warn('Debe registrar paciente');
+    } else {
+      this.props.navigation.navigate('Diagnostic');
+    }
   };
   render() {
     const {
@@ -151,7 +194,9 @@ export default class RegisterPatient extends Component {
       peso,
       talla,
       sexo,
+      actividad,
       returnS,
+      detailPatient,
       disabledButton,
     } = this.state;
     return (
@@ -255,18 +300,81 @@ export default class RegisterPatient extends Component {
               ]}
               onChangeText={(value) => this.onChangeText(value, 'sexo')}
             />
+            <Dropdown
+              label={'Actividad'}
+              value={actividad}
+              containerStyle={{marginTop: 10}}
+              inputContainerStyle={{
+                backgroundColor: 'white',
+                borderBottomWidth: 0,
+                borderRadius: 8,
+                paddingLeft: 2,
+              }}
+              labelTextStyle={{marginTop: -10, paddingLeft: 2}}
+              data={[
+                {
+                  value: 'a1',
+                  label: 'Reposo',
+                },
+                {
+                  value: 'a2',
+                  label: 'Muy ligera',
+                },
+                {
+                  value: 'a3',
+                  label: 'Ligera',
+                },
+                {
+                  value: 'a4',
+                  label: 'Moderada',
+                },
+                {
+                  value: 'a5',
+                  label: 'Pesada',
+                },
+              ]}
+              onChangeText={(value) => this.onChangeText(value, 'actividad')}
+            />
             <Button
               onPressButton={() => this.sendRegister()}
               styleText={styles.textButton}
               title="Registrar"
               disabled={disabledButton}
             />
-            <TouchableOpacity onPress={this.goReturn} style={styles.register}>
-              <Text style={styles.textRegister}>{returnS} Retornar</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row'}}>
+              <View style={{width: '50%'}}>
+                <TouchableOpacity
+                  onPress={this.goReturn}
+                  style={styles.register}>
+                  <Text style={styles.textLink}>{returnS} Retornar</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{width: '50%'}}>
+                <TouchableOpacity
+                  onPress={this.goDiagnostic}
+                  style={styles.diagnostic}>
+                  <Text style={styles.textLink}>Diagnóstico ></Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </ScrollView>
       </View>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    data: state.patientReducer,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setRegisterPatients: (data) => dispatch(Actions.setPatients(data)),
+    getRegisterPatients: () => dispatch(Actions.getPatients()),    
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterPatient);

@@ -9,6 +9,8 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import {connect} from 'react-redux';
+import Actions from '../actions/PatientAction';
 
 const styles = StyleSheet.create({
   container: {
@@ -57,15 +59,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
 });
-export default class Dashboard extends Component {
+class Dashboard extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      detailPatient: '',
+    };
   }
-  goToRegisterPatient = (item, index) => {
+  componentDidMount() {
+    this.props.getRegisterPatients();
+    const result = this.props.data;
+    this.setState({
+      detailPatient: result.patient,
+    });
+  }
+  goToRegisterPatient = () => {
     this.props.navigation.navigate('RegisterPatient');
   };
+  goToDiagnostic = () => {
+    if (this.state.detailPatient === '') {
+      console.warn('Debe registrar paciente');
+    } else {
+      this.props.navigation.navigate('Diagnostic');
+    }
+  };
   render() {
+    const {detailPatient} = this.state;
     return (
       <View style={styles.container}>
         <ScrollView>
@@ -78,9 +97,11 @@ export default class Dashboard extends Component {
             </TouchableOpacity>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <View style={styles.containerDiagnostic}>
+            <TouchableOpacity
+              onPress={this.goToDiagnostic}
+              style={styles.containerDiagnostic}>
               <Text style={styles.titleItems}>Diagnóstico</Text>
-            </View>
+            </TouchableOpacity>
             <View style={styles.containerDiet}>
               <Text style={styles.titleItems}>Dieta</Text>
             </View>
@@ -90,3 +111,17 @@ export default class Dashboard extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    data: state.patientReducer,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getRegisterPatients: () => dispatch(Actions.getPatients()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

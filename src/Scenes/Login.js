@@ -13,8 +13,12 @@ import {
 } from 'react-native';
 import Input from '../Components/Forms/Input';
 import Button from '../Components/Forms/Button';
+import CustomModal from '../Components/Modal/CustomModal';
 import Api from '../Api';
+import {connect} from 'react-redux';
+import Actions from '../actions/UserAction';
 
+const {height: viewPortHeight} = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1
@@ -66,9 +70,23 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'white',
     fontWeight: 'bold',
-  }
+  },
+  textButtonModal: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  buttonContainerModal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#93278f',
+    marginTop: 10,
+    height:
+      Platform.OS === 'android' ? viewPortHeight * 0.08 : viewPortHeight * 0.06,
+    borderRadius: 5,
+  },
 });
-export default class Login extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -77,9 +95,10 @@ export default class Login extends Component {
       contrasena: '',
       disabled: true,
       disabledButton: false,
+      isLoginError: false,
     };
   }
-  onChangeText = (value, type) => {
+  onChangeText = (_value, type) => {
     if (type === 'usuario') {
       this.setState({
         usuario: this.inputUsuario.state.value,
@@ -98,7 +117,7 @@ export default class Login extends Component {
       });
     }
   };
-  sendLogin = () => {
+  sendLogin = async () => {
     let validacion = '';
     if (this.state.usuario === '') {
       validacion += 'Debe ingresar usuario \n';
@@ -113,22 +132,33 @@ export default class Login extends Component {
         usuario: this.state.usuario,
         contrasena: this.state.contrasena,
       };
-      Api.UsuarioApi.postLogin(parameters)
+      await Api.UsuarioApi.postLogin(parameters)
         .then((result) => {
           if (result.errors) {
+            this.setState({
+              isLoginError: true,
+            });
             //console.warn('Error', result.errors);
-            console.warn('Usuario y/o contraseña no son válidos');
+            //console.warn('Usuario y/o contraseña no son válidos');
           } else {
+            //const loginD = {nombres: 'prueba'};
+            this.registerUser(result);
             this.props.navigation.navigate('Dashboard');
             //console.warn('iniciando', result);
           }
         })
-        .catch((err) => {
-          console.warn('Error de servicio', err);
+        .catch((_err) => {
+          this.setState({
+            isLoginError: true,
+          });
         });
     }
   };
-  goToRegister = (item, index) => {
+  registerUser = async (data) => {
+    //console.warn(data);
+    await this.props.setUser(data);
+  };
+  goToRegister = (_item, _index) => {
     this.props.navigation.navigate('Register');
   };
   render() {
@@ -138,6 +168,7 @@ export default class Login extends Component {
       contrasena,
       disabled,
       disabledButton,
+      isLoginError,
     } = this.state;
     return (
       <View style={styles.container}>
@@ -195,7 +226,42 @@ export default class Login extends Component {
             </TouchableOpacity>
           </View>
         </ImageBackground>
+        <CustomModal
+          visible={isLoginError}
+          backdrop={() =>
+            this.setState({
+              isLoginError: false,
+            })
+          }
+          title={'Datos incorrectos'}
+          message={'Verifica tu datos.'}
+          iconError={true}>
+          <Button
+            onPressButton={() =>
+              this.setState({
+                isLoginError: false,
+              })
+            }
+            styleButton={styles.buttonContainerModal}
+            styleText={styles.textButtonModal}
+            title="Entendido"
+          />
+        </CustomModal>
       </View>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    data: state.userReducer,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setUser: (data) => dispatch(Actions.setUser(data)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

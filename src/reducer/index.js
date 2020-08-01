@@ -5,8 +5,8 @@ import userReducer from './User';
 
 export default function getRootReducer() {
   return combineReducers({
-    userReducer,
     patientReducer,
+    userReducer,
     network,
   });
 }

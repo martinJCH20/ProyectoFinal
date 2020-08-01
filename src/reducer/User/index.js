@@ -7,6 +7,12 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
+    case Actions.SET_USER_SUCCESS:
+      return {
+        ...state,
+        user: action.data,
+        success: true,
+      };
     case Actions.GET_USER_SUCCESS:
       return {
         ...state,

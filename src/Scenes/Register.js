@@ -1,10 +1,19 @@
 import React, {Component} from 'react';
-import {View, Text, StatusBar, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  Dimensions,
+  StatusBar,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import Input from '../Components/Forms/Input';
 import Button from '../Components/Forms/Button';
+import CustomModal from '../Components/Modal/CustomModal';
 import Api from '../Api';
 import {Dropdown} from 'react-native-material-dropdown';
 
+const {height: viewPortHeight} = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -47,6 +56,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     backgroundColor: 'white'
   },
+  textButtonModal: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  buttonContainerModal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#93278f',
+    marginTop: 10,
+    height:
+      Platform.OS === 'android' ? viewPortHeight * 0.08 : viewPortHeight * 0.06,
+    borderRadius: 5,
+  },
 });
 export default class Register extends Component {
   constructor(props) {
@@ -71,6 +94,8 @@ export default class Register extends Component {
       getGradoAcademico: '',
       selectGradoAcademico: [],
       disabledButton: false,
+      isError: false,
+      isVisible: false,
     }
   }
   async componentDidMount() {
@@ -200,15 +225,28 @@ export default class Register extends Component {
       Api.UsuarioApi.createUsuario(parameters)
         .then((result) => {
           if (result.errors) {
-            console.warn('data errors', result.errors);
+            this.setState({
+              isError: true,
+            });
+            //console.warn('data errors', result.errors);
           } else {
-            console.warn('Registrado');
+            //this.props.navigation.navigate('Login');
+            this.setState({
+              isVisible: true,
+            });
+            //console.warn('Registrado');
           }
         })
         .catch((err) => {
-          console.warn('Response err', err);
+          this.setState({
+            isError: true,
+          });
+          //console.warn('Response err', err);
         });
     }
+  };
+  goToLogin = () => {
+    this.props.navigation.navigate('Login');
   };
   render() {
     const {
@@ -224,6 +262,8 @@ export default class Register extends Component {
       sexo,
       selectGradoAcademico,
       disabledButton,
+      isError,
+      isVisible,
     } = this.state;
     return (
       <View style={styles.container}>
@@ -391,6 +431,44 @@ export default class Register extends Component {
             />
           </View>
         </ScrollView>
+        <CustomModal
+          visible={isVisible}
+          backdrop={() =>
+            this.setState({
+              isVisible: false,
+            })
+          }
+          title={'Registro éxitoso'}
+          message={'Se han registrado tus datos correctamente.'}
+          iconSuccess={true}>
+          <Button
+            onPressButton={() => this.goToLogin()}
+            styleButton={styles.buttonContainerModal}
+            styleText={styles.textButtonModal}
+            title="Entendido"
+          />
+        </CustomModal>
+        <CustomModal
+          visible={isError}
+          backdrop={() =>
+            this.setState({
+              isError: false,
+            })
+          }
+          title={'Error de registro'}
+          message={'Verifica tu datos.'}
+          iconError={true}>
+          <Button
+            onPressButton={() =>
+              this.setState({
+                isError: false,
+              })
+            }
+            styleButton={styles.buttonContainerModal}
+            styleText={styles.textButtonModal}
+            title="Entendido"
+          />
+        </CustomModal>
       </View>
     );
   }

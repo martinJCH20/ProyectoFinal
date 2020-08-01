@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
+  Dimensions,
   StatusBar,
   StyleSheet,
   ScrollView,
@@ -11,8 +12,10 @@ import {connect} from 'react-redux';
 import Actions from '../actions/PatientAction';
 import Input from '../Components/Forms/Input';
 import Button from '../Components/Forms/Button';
+import CustomModal from '../Components/Modal/CustomModal';
 import {Dropdown} from 'react-native-material-dropdown';
 
+const {height: viewPortHeight} = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -60,7 +63,21 @@ const styles = StyleSheet.create({
   diagnostic: {
     alignItems: 'flex-end',
     marginTop: 10,
-  }
+  },
+  textButtonModal: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  buttonContainerModal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#93278f',
+    marginTop: 10,
+    height:
+      Platform.OS === 'android' ? viewPortHeight * 0.08 : viewPortHeight * 0.06,
+    borderRadius: 5,
+  },
 });
 class RegisterPatient extends Component {
   constructor(props) {
@@ -75,6 +92,8 @@ class RegisterPatient extends Component {
       actividad: '',
       detailPatient: '',
       returnS: '<',
+      isRegister: false,
+      isVisible: false,
       disabledButton: false,
     };
   }
@@ -172,7 +191,10 @@ class RegisterPatient extends Component {
       await this.props.setRegisterPatients(patient);
       this.setState({detailPatient: patient})
       const pt = this.props.data;
-      console.warn('Registrado', pt);
+      this.setState({
+        isVisible: true,
+      })
+      //console.warn('Registrado', pt);
     }
   };
   goReturn = (item, index) => {
@@ -181,7 +203,10 @@ class RegisterPatient extends Component {
   goDiagnostic = () => {
     //console.warn(this.state.detailPatient);
     if (this.state.detailPatient === '') {
-      console.warn('Debe registrar paciente');
+      this.setState({
+        isRegister: true,
+      })
+      //console.warn('Debe registrar paciente');
     } else {
       this.props.navigation.navigate('Diagnostic');
     }
@@ -198,6 +223,8 @@ class RegisterPatient extends Component {
       returnS,
       detailPatient,
       disabledButton,
+      isRegister,
+      isVisible,
     } = this.state;
     return (
       <View style={styles.container}>
@@ -358,6 +385,48 @@ class RegisterPatient extends Component {
               </View>
             </View>
           </View>
+          <CustomModal
+            visible={isVisible}
+            backdrop={() =>
+              this.setState({
+                isVisible: false,
+              })
+            }
+            title={'Registro éxitoso'}
+            message={'Se han registrado los datos del paciente correctamente.'}
+            iconSuccess={true}>
+            <Button
+              onPressButton={() =>
+                this.setState({
+                  isVisible: false,
+                })
+              }
+              styleButton={styles.buttonContainerModal}
+              styleText={styles.textButtonModal}
+              title="Entendido"
+            />
+          </CustomModal>
+          <CustomModal
+            visible={isRegister}
+            backdrop={() =>
+              this.setState({
+                isRegister: false,
+              })
+            }
+            title={'Error de registro'}
+            message={'Ingresar datos solicitados.'}
+            iconError={true}>
+            <Button
+              onPressButton={() =>
+                this.setState({
+                  isRegister: false,
+                })
+              }
+              styleButton={styles.buttonContainerModal}
+              styleText={styles.textButtonModal}
+              title="Entendido"
+            />
+          </CustomModal>
         </ScrollView>
       </View>
     );
@@ -373,7 +442,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setRegisterPatients: (data) => dispatch(Actions.setPatients(data)),
-    getRegisterPatients: () => dispatch(Actions.getPatients()),    
+    getRegisterPatients: () => dispatch(Actions.getPatients()),
   };
 };
 

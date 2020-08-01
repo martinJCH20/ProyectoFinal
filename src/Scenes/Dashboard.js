@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Actions from '../actions/PatientAction';
+import ActionsUser from '../actions/UserAction';
 
 const styles = StyleSheet.create({
   container: {
@@ -64,14 +65,28 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       detailPatient: '',
+      detailUser: '',
+      nombres: '',
     };
   }
   componentDidMount() {
     this.props.getRegisterPatients();
     const result = this.props.data;
+    console.warn('patient', result);
     this.setState({
       detailPatient: result.patient,
     });
+    //this.props.getUser();
+    //const resultUser = this.props.data2;
+    //console.warn('resultadousuario', resultUser.user);
+    //this.setState({
+    //detailUser: resultUser.user,
+    //});
+    // this.state.detailUser.map((item, index) => {
+    //   this.setState({
+    //     nombres: item.nombres,
+    //   });
+    // })
   }
   goToRegisterPatient = () => {
     this.props.navigation.navigate('RegisterPatient');
@@ -84,7 +99,8 @@ class Dashboard extends Component {
     }
   };
   render() {
-    const {detailPatient} = this.state;
+    const {nombres} = this.state;
+    //console.warn(nombres);
     return (
       <View style={styles.container}>
         <ScrollView>
@@ -114,6 +130,7 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    //data2: state.userReducer,
     data: state.patientReducer,
   };
 };
@@ -121,6 +138,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getRegisterPatients: () => dispatch(Actions.getPatients()),
+    //getUser: () => dispatch(ActionsUser.getUser()),
   };
 };
 
